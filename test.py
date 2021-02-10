@@ -9,15 +9,10 @@ df['b']=range(1,11)
 df.to_csv(path+'/df.csv')
 
 
-def git_push():
-    try:
-        repo = Repo(path)
-        repo.git.add('df.csv')
-        repo.index.commit('autoupdate')
-        origin = repo.remote(name='origin')
-        origin.push()
-    except:
-        print('Some error occured while pushing the code')    
+repo = Repo(path)
+repo.git.add('df.csv')
+repo.index.commit('autoupdate')
+origin = repo.remote(name='origin')
+origin.push()
 
-git_push()
 
