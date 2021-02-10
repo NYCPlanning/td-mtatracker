@@ -65,12 +65,10 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     fig.update_layout(legend_title_text='Total Estimated Ridership'+str(timestamp))
     fig.update_yaxes(title_text= '')
     fig.write_html(path+'index.html',include_plotlyjs='cdn')
+    repo = Repo(path)
+    repo.git.add('index.html')
+    repo.index.commit('autoupdate')
+    origin = repo.remote(name='origin')
+    origin.push()
+    print(str(timestamp))
     time.sleep(60)
-
-
-
-repo = Repo(path)
-repo.git.add('index.html')
-repo.index.commit('autoupdate')
-origin = repo.remote(name='origin')
-origin.push()
