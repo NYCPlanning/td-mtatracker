@@ -1,19 +1,23 @@
-
-
 import pandas as pd
 import plotly.express as px
-from urllib.request import urlopen
-import plotly.graph_objects as go
+import plotly.io as pio
+from git import Repo
+import datetime
 
-today = pd.datetime.today().strftime("%m/%d/%Y")
+
+pio.renderers.default = "browser"
+
+path='/home/mayijun/GITHUB/td-plotly/'
+# path='C:/Users/mayij/Desktop/DOC/GITHUB/td-plotly/'
+
+
+timestamp=datetime.datetime.now()
 
 
 url1 = "https://new.mta.info/document/20441"
 
 
 df0= pd.read_csv(url1, low_memory=False)
-
-print(df0.columns.values)
 
 df0['Subways: % Change From Prior Year Equivalent Day'] =df0['Subways: % Change From Prior Year Equivalent Day'].astype(str)
 df0['Subways: % Change From Prior Year Equivalent Day'] = df0['Subways: % Change From Prior Year Equivalent Day'].str.replace("%","")
@@ -66,11 +70,6 @@ min_Date =  min_Date.strftime("%m/%d/%Y")
 
 
 
-df0.to_csv('SubwayAndBus_Summary.csv')
-
-
-
-
 fig = px.line(df0, x='Date', y=['Subway', 'Bus'])
 
 
@@ -103,8 +102,21 @@ fig.update_layout(margin={"r":50,"t":50,"l":50,"b":50},
     yanchor="top", y=1, x=1,))
 
 
-fig.update_layout(legend_title_text='Total Estimated Ridership')
+fig.update_layout(legend_title_text='Total Estimated Ridership'+str(timestamp))
 
 fig.update_yaxes(title_text= '')
 
 fig.show()
+
+fig.write_html(path+'test.html',include_plotlyjs='cdn')
+
+
+
+
+
+
+repo = Repo(path)
+repo.git.add('test.html')
+repo.index.commit('autoupdate')
+origin = repo.remote(name='origin')
+origin.push()
