@@ -2,7 +2,7 @@ import pandas as pd
 from git import Repo
 
 
-path='/home/mayijun/GITHUB/td-plotly'
+path='/home/mayijun/GITHUB/td-plotly/'
 df=pd.DataFrame()
 df['a']=range(0,10)
 df['b']=range(1,11)
