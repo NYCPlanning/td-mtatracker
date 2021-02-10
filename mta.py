@@ -16,7 +16,6 @@ path='/home/mayijun/GITHUB/td-plotly/'
 endtime=datetime.datetime(2022,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
 while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     timestamp=datetime.datetime.now(pytz.timezone('US/Eastern'))
-    timestamp=timestamp.strftime('%H:%M:%S')
     url1 = "https://new.mta.info/document/20441"
     df0= pd.read_csv(url1, low_memory=False)
     df0['Subways: % Change From Prior Year Equivalent Day'] =df0['Subways: % Change From Prior Year Equivalent Day'].astype(str)
@@ -62,7 +61,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         title="",
         lenmode="pixels", len=200,
         yanchor="top", y=1, x=1,))
-    fig.update_layout(legend_title_text='Total Estimated Ridership'+str(timestamp))
+    fig.update_layout(legend_title_text='Total Estimated Ridership')
     fig.update_yaxes(title_text= '')
     fig.write_html(path+'index.html',include_plotlyjs='cdn')
     repo = Repo(path)
@@ -71,4 +70,4 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     origin = repo.remote(name='origin')
     origin.push()
     print(str(timestamp))
-    time.sleep(60)
+    time.sleep(86400)
