@@ -5,7 +5,7 @@ from git import Repo
 import datetime
 
 
-pio.renderers.default = "browser"
+# pio.renderers.default = "browser"
 
 path='/home/mayijun/GITHUB/td-plotly/'
 # path='C:/Users/mayij/Desktop/DOC/GITHUB/td-plotly/'
