@@ -16,7 +16,7 @@ path='/home/mayijun/GITHUB/td-plotly/'
 endtime=datetime.datetime(2022,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
 while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     timestamp=datetime.datetime.now(pytz.timezone('US/Eastern'))
-    timestamp=timestamp.strftime()
+    timestamp=timestamp.strftime('%H:%M:%S')
     url1 = "https://new.mta.info/document/20441"
     df0= pd.read_csv(url1, low_memory=False)
     df0['Subways: % Change From Prior Year Equivalent Day'] =df0['Subways: % Change From Prior Year Equivalent Day'].astype(str)
