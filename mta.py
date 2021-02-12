@@ -6,64 +6,78 @@ import datetime
 import pytz
 import time
 
-# pio.renderers.default = "browser"
 
+
+# pio.renderers.default = "browser"
+pd.set_option('display.max_columns', None)
 path='/home/mayijun/GITHUB/td-plotly/'
 # path='C:/Users/mayij/Desktop/DOC/GITHUB/td-plotly/'
 
 
 
-endtime=datetime.datetime(2022,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
+endtime=datetime.datetime(2025,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
 while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
-    timestamp=datetime.datetime.now(pytz.timezone('US/Eastern'))
-    url1 = "https://new.mta.info/document/20441"
-    df0= pd.read_csv(url1, low_memory=False)
-    df0['Subways: % Change From Prior Year Equivalent Day'] =df0['Subways: % Change From Prior Year Equivalent Day'].astype(str)
-    df0['Subways: % Change From Prior Year Equivalent Day'] = df0['Subways: % Change From Prior Year Equivalent Day'].str.replace("%","")
-    df0['Subways: % Change From Prior Year Equivalent Day'] = df0['Subways: % Change From Prior Year Equivalent Day'].str.replace(".","").astype(int)
-    df0 = df0[['Date',	'Subways: Total Estimated Ridership', 'Subways: % Change From Prior Year Equivalent Day', 'Buses: Total Estimated Ridership', 'Buses: % Change From Prior Year Equivalent Day']]
-    df0['Equiv Prior Year_prel']= df0['Subways: Total Estimated Ridership']/(1000 + df0['Subways: % Change From Prior Year Equivalent Day'])
-    df0['Equiv Prior Year'] = df0['Equiv Prior Year_prel']*1000
-    df0['Equiv Prior Year Subway'] = df0['Equiv Prior Year'].astype(int)
-    df0['Subway']= df0['Subways: Total Estimated Ridership']
-    df0['Buses: % Change From Prior Year Equivalent Day'] =df0['Buses: % Change From Prior Year Equivalent Day'].astype(str)
-    df0['Buses: % Change From Prior Year Equivalent Day'] =df0['Buses: % Change From Prior Year Equivalent Day'] + '.0'
-    df0['Buses: % Change From Prior Year Equivalent Day'] = df0['Buses: % Change From Prior Year Equivalent Day'].str.replace("%","")
-    df0['Buses: % Change From Prior Year Equivalent Day'] = df0['Buses: % Change From Prior Year Equivalent Day'].str.replace(".","").astype(int)
-    df0['Equiv Prior Year_prel']= df0['Buses: Total Estimated Ridership']/(1000 + df0['Buses: % Change From Prior Year Equivalent Day'])
-    df0['Equiv Prior Year'] = df0['Equiv Prior Year_prel']*1000
-    df0['Equiv Prior Year Bus'] = df0['Equiv Prior Year'].astype(int)
-    df0['Bus']= df0['Buses: Total Estimated Ridership'].astype(int)
-    df0 = df0[['Date',	'Equiv Prior Year Subway', 'Subway', 'Equiv Prior Year Bus', 'Bus']]
-    df0['Date'] = pd.to_datetime(df0['Date'])
-    df0 = df0.sort_values(by=['Date'])
-    max_Date = df0['Date'].iloc[-1]
-    max_Date =  max_Date.strftime("%m/%d/%Y")
-    min_Date = df0['Date'].iloc[0]
-    min_Date =  min_Date.strftime("%m/%d/%Y")
-    fig = px.line(df0, x='Date', y=['Subway', 'Bus'])
-    for d in fig['data']:
-            if d['name'] == 'Equiv Prior Year Bus':
-                d['line']['color'] = 'pink'
-    for d in fig['data']:
-            if d['name'] == 'Equiv Prior Year Subway':
-                d['line']['color'] = 'lightblue'
-    for d in fig['data']:
-        if d['name'] == 'Bus':
-            d['line']['color']='orange'
-    
-    for d in fig['data']:
-            if d['name'] == 'Subway':
-                d['line']['color'] = 'steelblue'
-    fig.update_layout(margin={"r":50,"t":50,"l":50,"b":50},
-        title = dict(text = 'Subway and Bus Estimated Ridership ' + min_Date + ' - ' + max_Date +' (Source: MTA)' , yanchor = 'top', xanchor = 'left'),
-        coloraxis_colorbar=dict(
-        title="",
-        lenmode="pixels", len=200,
-        yanchor="top", y=1, x=1,))
-    fig.update_layout(legend_title_text='Total Estimated Ridership')
-    fig.update_yaxes(title_text= '')
+    timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
+    url="https://new.mta.info/document/20441"
+    df=pd.read_csv(url,dtype=str)
+    df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
+    df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
+    df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % Change From Prior Year Equivalent Day']]
+    df['SubwayPrior']=df['Subway']/(1+df['SubwayPct'])
+    df['SubwayPrior']=[int(x) for x in df['SubwayPrior']]
+    df['Bus']=[int(x) for x in df['Buses: Total Estimated Ridership']]
+    df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % Change From Prior Year Equivalent Day']]
+    df['BusPrior']=df['Bus']/(1+df['BusPct'])
+    df['BusPrior']=[int(x) for x in df['BusPrior']]
+    df=df[['Date','SubwayPrior','Subway','BusPrior','Bus']].sort_values('Date').reset_index(drop=True)
+
+    fig=px.line(df,
+                x='Date',
+                y=['Subway','Bus'],
+                color_discrete_sequence=['tomato','steelblue'],
+                title='<b>Subway and Bus Estimated Ridership '+df.iloc[0,0].strftime('%m/%d/%Y')+' - '+df.iloc[-1,0].strftime('%m/%d/%Y')+' (Source: '+"</b><a href='https://new.mta.info/coronavirus/ridership'>MTA</a>"+'<b>)</b>',
+                template='plotly_white')
+    fig.update_layout(
+        title={'font':{'family':'arial',
+                       'size':20,
+                       'color':'black'},
+               'x':0.5,
+               'xanchor':'center'},
+        legend={'orientation':'h',
+                'title':{'text':''},
+                'font':{'family':'arial',
+                        'size':18,
+                        'color':'black'},
+                'x':0.5,
+                'xanchor':'center'},
+        xaxis={'title':{'text':'Date',
+                        'font':{'family':'arial',
+                                'size':16,
+                                'color':'black'}},
+               'tickfont':{'family':'arial',
+                           'size':14,
+                           'color':'black'},
+               'fixedrange':True,
+               'showgrid':True},
+        yaxis={'title':{'text':'Ridership',
+                        'font':{'family':'arial',
+                                'size':16,
+                                'color':'black'}},
+               'tickfont':{'family':'arial',
+                           'size':14,
+                           'color':'black'},
+               'rangemode':'nonnegative',
+               'fixedrange':True,
+               'showgrid':True},
+        dragmode=False,
+        hovermode='x unified'
+    )
+    fig.update_traces(
+        line={'width':3},
+        hovertemplate='%{y:#.3s}'
+        )
     fig.write_html(path+'index.html',include_plotlyjs='cdn')
+    
     repo = Repo(path)
     repo.git.add('index.html')
     repo.index.commit('autoupdate')
