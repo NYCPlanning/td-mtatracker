@@ -46,25 +46,25 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         legend={'orientation':'h',
                 'title':{'text':''},
                 'font':{'family':'arial',
-                        'size':18,
+                        'size':16,
                         'color':'black'},
                 'x':0.5,
                 'xanchor':'center'},
         xaxis={'title':{'text':'Date',
                         'font':{'family':'arial',
-                                'size':16,
+                                'size':14,
                                 'color':'black'}},
                'tickfont':{'family':'arial',
-                           'size':14,
+                           'size':12,
                            'color':'black'},
                'fixedrange':True,
                'showgrid':True},
         yaxis={'title':{'text':'Ridership',
                         'font':{'family':'arial',
-                                'size':16,
+                                'size':14,
                                 'color':'black'}},
                'tickfont':{'family':'arial',
-                           'size':14,
+                           'size':12,
                            'color':'black'},
                'rangemode':'nonnegative',
                'fixedrange':True,
@@ -75,7 +75,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     fig.update_traces(
         line={'width':3},
         hovertemplate='%{y:#.3s}'
-        )
+        )  
     fig.write_html(path+'index.html',include_plotlyjs='cdn')
     
     repo = Repo(path)
