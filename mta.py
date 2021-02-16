@@ -49,7 +49,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                         'size':16,
                         'color':'black'},
                 'x':0.5,
-                'xanchor':'center'},
+                'xanchor':'center',
+                'y':1,
+                'yanchor':'bottom'},
         xaxis={'title':{'text':'Date',
                         'font':{'family':'arial',
                                 'size':14,
@@ -73,9 +75,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         hovermode='x unified'
     )
     fig.update_traces(
-        line={'width':3},
+        line={'width':2},
         hovertemplate='%{y:#.3s}'
-        )  
+        )
     fig.write_html(path+'index.html',include_plotlyjs='cdn')
     
     repo = Repo(path)
