@@ -18,7 +18,7 @@ path='/home/mayijun/GITHUB/td-plotly/'
 endtime=datetime.datetime(2025,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
 while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
-    url="https://new.mta.info/document/20441"
+    url='https://new.mta.info/document/20441'
     df=pd.read_csv(url,dtype=str)
     df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
     df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
