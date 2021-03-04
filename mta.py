@@ -10,7 +10,7 @@ import time
 
 # pio.renderers.default = "browser"
 pd.set_option('display.max_columns', None)
-path='/home/mayijun/GITHUB/td-plotly/'
+path='/home/mayijun/GITHUB/td-mtatracker/'
 # path='C:/Users/mayij/Desktop/DOC/GITHUB/td-plotly/'
 
 
