@@ -11,7 +11,7 @@ import time
 # pio.renderers.default = "browser"
 pd.set_option('display.max_columns', None)
 path='/home/mayijun/GITHUB/td-mtatracker/'
-# path='C:/Users/mayij/Desktop/DOC/GITHUB/td-plotly/'
+# path='C:/Users/mayij/Desktop/DOC/GITHUB/td-mtatracker/'
 
 
 
@@ -20,7 +20,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
     url='https://new.mta.info/document/20441'
     df=pd.read_csv(url,dtype=str)
-    df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
+    df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['open']]
     df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
     df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % Change From Prior Year Equivalent Day']]
     df['SubwayPrior']=df['Subway']/(1+df['SubwayPct'])
