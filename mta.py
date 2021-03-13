@@ -125,7 +125,6 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
              'Metro-North Railroad':'**',
              'Access-A-Ride':'**',
              'Bridges and Tunnels':'*'}
-
     fig=go.Figure()
     fig=fig.add_trace(go.Scattergl(name='',
                                    x=df['Date'],
