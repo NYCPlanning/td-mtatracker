@@ -195,7 +195,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     fig.write_html(path+'index2.html',include_plotlyjs='cdn')
     
     repo = Repo(path)
-    repo.git.add('index.html')
+    repo.git.add('.')
     repo.index.commit('autoupdate')
     origin = repo.remote(name='origin')
     origin.push()
