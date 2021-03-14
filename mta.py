@@ -192,7 +192,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         yanchor='top',
         showarrow=False
         )
-    fig.write_html(path+'index2.html',include_plotlyjs='cdn')
+    fig.write_html(path+'index2.html',
+                   include_plotlyjs='cdn',
+                   config={'displaylogo':False,'modeBarButtonsToRemove':['select2d','lasso2d']})
     
     repo = Repo(path)
     repo.git.add('.')
