@@ -1,5 +1,7 @@
 import pandas as pd
+import geopandas as gpd
 import numpy as np
+import shapely
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
@@ -196,6 +198,48 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                    include_plotlyjs='cdn',
                    config={'displaylogo':False,'modeBarButtonsToRemove':['select2d','lasso2d']})
     
+    rc=pd.read_csv('https://raw.githubusercontent.com/NYCPlanning/td-mtatracker/master/RemoteComplex.csv',
+               dtype=str,converters={'CplxID':float,'CplxLat':float,'CplxLong':float,'Hub':float})
+    wkd={5:0,6:1,0:2,1:3,2:4,3:5,4:6}
+    urltd=datetime.datetime.now(pytz.timezone('US/Eastern'))
+    urltd=urltd-datetime.timedelta(list(pd.Series(urltd.weekday()).map(wkd))[0])
+    urltd=datetime.datetime.strftime(urltd,'%y%m%d')
+    urltd='http://web.mta.info/developers/data/nyct/fares/fares_'+urltd+'.csv'
+    wktd=pd.read_csv(urltd,dtype=str,skiprows=1,nrows=1,header=None).loc[0,1]
+    dttd=pd.read_csv(urltd,skiprows=2,header=0)
+    dttd['FareTD']=dttd.iloc[:,2:].sum(axis=1)
+    dttd['unit']=dttd['REMOTE'].copy()
+    dttd['WeekTD']=wktd
+    dttd=dttd[['unit','WeekTD','FareTD']].reset_index(drop=True)
+    dttd=pd.merge(dttd,rc,how='left',left_on='unit',right_on='Remote')
+    dttd=dttd.groupby(['CplxID','WeekTD'],as_index=False).agg({'FareTD':'sum'}).reset_index(drop=True)
+    dttd.columns=['CplxID','WeekTD','FareTD']
+    urlpr=datetime.datetime.now(pytz.timezone('US/Eastern'))-datetime.timedelta(365)
+    urlpr=urlpr-datetime.timedelta(list(pd.Series(urlpr.weekday()).map(wkd))[0])
+    urlpr=datetime.datetime.strftime(urlpr,'%y%m%d')
+    urlpr='http://web.mta.info/developers/data/nyct/fares/fares_'+urlpr+'.csv'
+    wkpr=pd.read_csv(urlpr,dtype=str,skiprows=1,nrows=1,header=None).loc[0,1]
+    dtpr=pd.read_csv(urlpr,skiprows=2,header=0)
+    dtpr['FarePR']=dtpr.iloc[:,2:].sum(axis=1)
+    dtpr['unit']=dtpr['REMOTE'].copy()
+    dtpr['WeekPR']=wkpr
+    dtpr=dtpr[['unit','WeekPR','FarePR']].reset_index(drop=True)
+    dtpr=pd.merge(dtpr,rc,how='left',left_on='unit',right_on='Remote')
+    dtpr=dtpr.groupby(['CplxID','WeekPR'],as_index=False).agg({'FarePR':'sum'}).reset_index(drop=True)
+    dtpr.columns=['CplxID','WeekPR','FarePR']
+    df=pd.merge(dtpr,dttd,how='inner',on='CplxID')
+    df['Diff']=df['FareTD']-df['FarePR']
+    df['DiffPct']=df['Diff']/df['FarePR']
+    df['Pct']=df['FareTD']/df['FarePR']
+    df['Pct'].describe(percentiles=np.arange(0.2,1,0.2))
+    df['PctCat']=np.where(df['Pct']<=0.3,'<=30%',
+                 np.where(df['Pct']<=0.4,'31%~40%','>40%'))
+    df=pd.merge(rc.drop('Remote',axis=1).drop_duplicates(keep='first').reset_index(drop=True),df,how='inner',on='CplxID')
+    df=df[['CplxID','Borough','CplxName','Routes','CplxLat','CplxLong','WeekPR','FarePR','WeekTD','FareTD',
+           'Diff','DiffPct','Pct','PctCat']].reset_index(drop=True)
+    df=gpd.GeoDataFrame(df,geometry=[shapely.geometry.Point(x,y) for x,y in zip(df['CplxLong'],df['CplxLat'])],crs='epsg:4326')
+    df.to_file(path+'fare.geojson',driver='GeoJSON')
+
     repo = Repo(path)
     repo.git.add('.')
     repo.index.commit('autoupdate')
@@ -205,26 +249,6 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     time.sleep(86400)
 
 
-
-
-
-
-
-
-
-
-k=datetime.datetime.now(pytz.timezone('US/Eastern'))
-rc=pd.read_csv(path+'RemoteComplex.csv',dtype=str,converters={'CplxID':float,'CplxLat':float,'CplxLong':float,'Hub':float})
-
-## Download data
-#dl=datetime.datetime(2020,4,4)
-#for i in range(0,150):
-#    dl=dl-datetime.timedelta(days=7)
-#    url='http://web.mta.info/developers/data/nyct/fares/fares_'+datetime.datetime.strftime(dl,'%y%m%d')+'.csv'
-#    req=urllib.request.urlopen(url)
-#    file = open(path+'DATA/'+datetime.datetime.strftime(dl,'%y%m%d')+'.csv', "wb")
-#    shutil.copyfileobj(req,file)
-#    file.close()
 
 
 
