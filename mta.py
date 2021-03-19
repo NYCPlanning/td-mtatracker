@@ -203,3 +203,33 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     origin.push()
     print(str(timestamp))
     time.sleep(86400)
+
+
+
+
+
+
+
+
+
+
+k=datetime.datetime.now(pytz.timezone('US/Eastern'))
+rc=pd.read_csv(path+'RemoteComplex.csv',dtype=str,converters={'CplxID':float,'CplxLat':float,'CplxLong':float,'Hub':float})
+
+## Download data
+#dl=datetime.datetime(2020,4,4)
+#for i in range(0,150):
+#    dl=dl-datetime.timedelta(days=7)
+#    url='http://web.mta.info/developers/data/nyct/fares/fares_'+datetime.datetime.strftime(dl,'%y%m%d')+'.csv'
+#    req=urllib.request.urlopen(url)
+#    file = open(path+'DATA/'+datetime.datetime.strftime(dl,'%y%m%d')+'.csv', "wb")
+#    shutil.copyfileobj(req,file)
+#    file.close()
+
+
+
+
+
+
+
+
