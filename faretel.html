@@ -9,6 +9,8 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 
 
 
@@ -32,7 +34,7 @@
             width: auto;
             height: auto;
             max-height: 90%;
-            padding-top: 0.5rem;
+            padding-top: 1rem;
             padding-right: 1rem;
             padding-left: 1rem;
             padding-bottom: 1rem;
@@ -45,12 +47,16 @@
             border-radius: 4px;
         }
 
-        .row {
-            margin-top: 0.5rem;
-        }
-
         #header {
             font-weight: bold;
+        }
+
+        #chevron {
+            margin-left: 0.5rem;
+        }
+
+        #datadate {
+            font-size: 0.9rem;
         }
 
         .itemgroup1 {
@@ -67,7 +73,7 @@
         .item1-label {
             font-size: 0.9rem;
             font-weight: bold;
-            width: 18rem;
+            width: 19rem;
         }
 
         .itemgroup2 {
@@ -121,8 +127,14 @@
 
     <nav id="legend">
         <div class="container g-0">
-            <div class="row g-0 justify-content-start">
-                <div class="col-auto" id="header"> Subway Ridership and Telework Capability </div>
+            <div class="row g-0 justify-content-between" id="header">
+                <div class="col-auto"> Subway Ridership and Telework Capability </div>
+                <div class="col-auto">
+                    <i class="bi bi-chevron-down" id='chevron'></i>
+                </div>
+            </div>
+            <div class="row g-0 justify-content-start" id="datadate">
+                <div class="col-auto"> </div>
             </div>
             <div class="row g-0 justify-content-start">
                 <div class="col-auto" id="legends"> </div> <!-- placeholder for layer selector and legend -->
@@ -233,7 +245,7 @@
                 'sourcedata': 'fare.geojson', // data source
                 'layerid': 'fare', // layer id
                 'layertype': 'circle', // symbology type
-                'layername': 'Current Weekly Ridership as Percentage of Equivalent Week from Prior Year', // layer name for the legend
+                'layername': 'Current Weekly Ridership as Percentage of Equivalent Week in 2019', // layer name for the legend
                 'layervisibility': 'visible', // visibility of the layer
                 'layercolname': 'PctCat', // category column name
                 'layercat': ['<=30%', '31%~40%', '>40%'], // categories
@@ -277,8 +289,6 @@
 
 
 
-
-
             // Add popup
             var popup = new mapboxgl.Popup({
                 closeButton: true, // close button
@@ -306,6 +316,7 @@
             });
 
 
+
             // Add fare popup
             // Add click event
             map.on('click', 'fare', function (e) {
@@ -316,9 +327,9 @@
                 description += "<b>Routes: </b><span>" + e.features[0].properties.Routes + "</span><br>";
                 description += "<b>Current Week: </b><span>" + e.features[0].properties.WeekTD + "</span><br>";
                 description += "<b>Current Weekly Ridership: </b><span>" + e.features[0].properties.FareTD.toLocaleString() + "</span><br>";
-                description += "<b>Equivalent Week from Prior Year: </b><span>" + e.features[0].properties.WeekPR + "</span><br>";
-                description += "<b>Prior Weekly Riderhsip: </b><span>" + e.features[0].properties.FarePR.toLocaleString() + "</span><br>";
-                description += "<b>Current Weekly Ridership as Percentage of Prior Year: </b><span>" + (Number(e.features[0].properties.Pct) * 100).toFixed(2) + "%</span><br>";
+                description += "<b>Equivalent Week in 2019: </b><span>" + e.features[0].properties.WeekPR + "</span><br>";
+                description += "<b>2019 Weekly Riderhsip: </b><span>" + e.features[0].properties.FarePR.toLocaleString() + "</span><br>";
+                description += "<b>Current Weekly Ridership as Percentage of 2019 Ridership: </b><span>" + (Number(e.features[0].properties.Pct) * 100).toFixed(2) + "%</span><br>";
                 popup.setLngLat(coordinates).setHTML(description).addTo(map); //add popup
             });
             // Add hover events
@@ -328,8 +339,6 @@
             map.on('mouseleave', 'fare', function () {
                 map.getCanvas().style.cursor = '';
             });
-
-
 
 
 
@@ -425,6 +434,31 @@
                         document.getElementById(clickedLayer + '-cat').style.display = 'block';
                     };
                 });
+            };
+        });
+
+
+
+        // Add data dates
+        Plotly.d3.json("fare.geojson", function (data) {
+            var weektd = data['features'][0]['properties']['WeekTD'];
+            var weekpr = data['features'][0]['properties']['WeekPR'];
+            document.getElementById('datadate').textContent = '(' + weektd + ' vs ' + weekpr + ')';
+        });
+
+
+
+        // Set collapse event
+        var collapsevalue = 0;
+        header.addEventListener('click', function () {
+            if (collapsevalue === 0) {
+                document.getElementById('legends').style.display = "none";
+                document.getElementById('chevron').className = "bi bi-chevron-up";
+                collapsevalue = 1;
+            } else {
+                document.getElementById('legends').style.display = "block";
+                document.getElementById('chevron').className = "bi bi-chevron-down";
+                collapsevalue = 0;
             };
         });
     </script>

@@ -214,7 +214,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     dttd=pd.merge(dttd,rc,how='left',left_on='unit',right_on='Remote')
     dttd=dttd.groupby(['CplxID','WeekTD'],as_index=False).agg({'FareTD':'sum'}).reset_index(drop=True)
     dttd.columns=['CplxID','WeekTD','FareTD']
-    urlpr=datetime.datetime.now(pytz.timezone('US/Eastern'))-datetime.timedelta(365)
+    urlpr=datetime.datetime.now(pytz.timezone('US/Eastern'))-datetime.timedelta(731)
     urlpr=urlpr-datetime.timedelta(list(pd.Series(urlpr.weekday()).map(wkd))[0])
     urlpr=datetime.datetime.strftime(urlpr,'%y%m%d')
     urlpr='http://web.mta.info/developers/data/nyct/fares/fares_'+urlpr+'.csv'
