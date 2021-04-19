@@ -95,7 +95,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['Metro-North: % Change From 2019 Monthly Weekday/Saturday/Sunday Average']]
         df['MNRPrior']=df['MNR']/(1+df['MNRPct'])    
         df['AAR']=pd.to_numeric(df['Access-A-Ride: Total Scheduled Trips'])
-        df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % Change From 2019 Monthly Weekday/Saturday/Sunday Average']]
+        df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % Change From Pre-Pandemic Equivalent Day']]
         df['AARPrior']=df['AAR']/(1+df['AARPct'])    
         df['BT']=pd.to_numeric(df['Bridges and Tunnels: Total Traffic'])
         df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % Change From Pre-Pandemic Equivalent Day']]
