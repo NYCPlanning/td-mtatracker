@@ -9,6 +9,8 @@ from git import Repo
 import datetime
 import pytz
 import time
+import io
+import requests
 
 
 
@@ -23,8 +25,10 @@ endtime=datetime.datetime(2025,12,31,23,0,0,0,pytz.timezone('US/Eastern'))
 while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     try:
         timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
         url='https://new.mta.info/document/20441'
-        df=pd.read_csv(url,dtype=str)
+        s=requests.get(url, headers= headers).text
+        df=pd.read_csv(io.StringIO(s),dtype=str)
         df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
         df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
         df['Bus']=[int(x) for x in df['Buses: Total Estimated Ridership']]
