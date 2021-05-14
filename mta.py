@@ -158,7 +158,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
             title={'text':'<b>MTA Estimated Weekly Ridership Change from 2019 (Source: '+"</b><a href='https://new.mta.info/coronavirus/ridership'>MTA</a>"+'<b>)</b>',
                    'font_size':20,
                    'x':0.5,
-                   'xanchor':'center'},
+                   'xanchor':'center',
+                   'y':0.98,
+                   'yanchor':'top'},
             legend={'orientation':'h',
                     'title_text':'',
                     'font_size':16,
@@ -183,7 +185,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                   'color':'black'},
             dragmode=False,
             hovermode='x unified',
-            )   
+            )
         fig.add_annotation(
             text='* Percent Change From Pre-Pandemic Equivalent Day     ** Percent Change From 2019 Monthly Weekday/Saturday/Sunday Average',
             font_size=12,
