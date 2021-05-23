@@ -201,6 +201,8 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                        include_plotlyjs='cdn',
                        config={'displaylogo':False,'modeBarButtonsToRemove':['select2d','lasso2d']})
         
+        
+        
         rc=pd.read_csv('https://raw.githubusercontent.com/NYCPlanning/td-mtatracker/master/RemoteComplex.csv',
                    dtype=str,converters={'CplxID':float,'CplxLat':float,'CplxLong':float,'Hub':float})
         wkd={5:0,6:1,0:2,1:3,2:4,3:5,4:6}
@@ -242,6 +244,8 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                'Diff','DiffPct','Pct','PctCat']].reset_index(drop=True)
         df=gpd.GeoDataFrame(df,geometry=[shapely.geometry.Point(x,y) for x,y in zip(df['CplxLong'],df['CplxLat'])],crs='epsg:4326')
         df.to_file(path+'fare.geojson',driver='GeoJSON')
+    
+    
     
         repo = Repo(path)
         repo.git.add('.')
