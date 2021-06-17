@@ -9,13 +9,14 @@ from git import Repo
 import datetime
 import pytz
 import time
-
+import requests
+import io
 
 
 # pio.renderers.default = "browser"
 pd.set_option('display.max_columns', None)
-# path='/home/mayijun/GITHUB/td-mtatracker/'
-path='C:/Users/mayij/Desktop/DOC/GITHUB/td-mtatracker/'
+path='/home/mayijun/GITHUB/td-mtatracker/'
+# path='C:/Users/mayij/Desktop/DOC/GITHUB/td-mtatracker/'
 
 
 
@@ -24,7 +25,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
     try:
         timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
         url='https://new.mta.info/document/20441'
-        df=pd.read_csv(url,dtype=str)
+        headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
+        req=requests.get(url,headers=headers)
+        df=pd.read_csv(io.StringIO(req.text),dtype=str)
         df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
         df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
         df['Bus']=[int(x) for x in df['Buses: Total Estimated Ridership']]
@@ -72,7 +75,9 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         
         timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
         url='https://new.mta.info/document/20441'
-        df=pd.read_csv(url,dtype=str)
+        headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"}
+        req=requests.get(url,headers=headers)   
+        df=pd.read_csv(io.StringIO(req.text),dtype=str)
         df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
         df=df.sort_values(['Date']).reset_index(drop=True)
         df['Week']=[str(x.week)+'|'+str(x.year) for x in df['Date']]
