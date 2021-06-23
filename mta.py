@@ -187,7 +187,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
             hovermode='x unified',
             )
         fig.add_annotation(
-            text='* Percent Change From Pre-Pandemic Equivalent Day     ** Percent Change From 2019 Monthly Weekday/Saturday/Sunday Average',
+            text='* Percent Change From Pre-Pandemic Equivalent Day     ** Percent Change From 2019 Monthly Averages for Weekdays, Saturdays and Sundays',
             font_size=12,
             xref='paper',
             x=0.5,
