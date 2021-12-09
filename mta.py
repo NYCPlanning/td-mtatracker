@@ -83,35 +83,37 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
         wk=pd.merge(wkstart[['Week','Date1']],wkend[['Week','Date2']],how='inner',on='Week')
         wk['DateRange']=wk['Date1']+' - '+wk['Date2']    
         df['Subway']=pd.to_numeric(df['Subways: Total Estimated Ridership'])
-        df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % Change From Pre-Pandemic Equivalent Day']]
-        df['SubwayPrior']=df['Subway']/(1+df['SubwayPct'])
+        df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % of Comparable Pre-Pandemic Day']]
+        df['SubwayPrior']=df['Subway']/df['SubwayPct']
         df['Bus']=pd.to_numeric(df['Buses: Total Estimated Ridership'])
-        df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % Change From Pre-Pandemic Equivalent Day']]
-        df['BusPrior']=df['Bus']/(1+df['BusPct'])    
+        df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % of Comparable Pre-Pandemic Day']]
+        df['BusPrior']=df['Bus']/df['BusPct'] 
         df['LIRR']=pd.to_numeric(df['LIRR: Total Estimated Ridership'])
-        df['LIRRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['LIRR: % Change From 2019 Monthly Weekday/Saturday/Sunday Average']]
-        df['LIRRPrior']=df['LIRR']/(1+df['LIRRPct'])    
+        df['LIRRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['LIRR: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+        df['LIRRPrior']=df['LIRR']/df['LIRRPct']
         df['MNR']=pd.to_numeric(df['Metro-North: Total Estimated Ridership'])
-        df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['Metro-North: % Change From 2019 Monthly Weekday/Saturday/Sunday Average']]
-        df['MNRPrior']=df['MNR']/(1+df['MNRPct'])    
-        df['AAR']=pd.to_numeric(df['Access-A-Ride: Total Scheduled Trips'])
-        df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % Change From Pre-Pandemic Equivalent Day']]
-        df['AARPrior']=df['AAR']/(1+df['AARPct'])    
+        df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['Metro-North: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+        df['MNRPrior']=df['MNR']/df['MNRPct']
+        df['AAR']=np.where(df['Access-A-Ride: Total Scheduled Trips']=='TBD','',df['Access-A-Ride: Total Scheduled Trips'])
+        df['AAR']=pd.to_numeric(df['AAR'])
+        df['AARPct']=np.where(df['Access-A-Ride: % of Comprable Pre-Pandemic Day']=='TBD','',df['Access-A-Ride: % of Comprable Pre-Pandemic Day'])
+        df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['AARPct']]
+        df['AARPrior']=df['AAR']/df['AARPct']
         df['BT']=pd.to_numeric(df['Bridges and Tunnels: Total Traffic'])
-        df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % Change From Pre-Pandemic Equivalent Day']]
-        df['BTPrior']=df['BT']/(1+df['BTPct'])    
+        df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % of Comparable Pre-Pandemic Day']]
+        df['BTPrior']=df['BT']/df['BTPct']  
         df=df.groupby(['Week'],as_index=False).agg({'Subway':'sum','SubwayPrior':'sum',
                                                     'Bus':'sum','BusPrior':'sum',
                                                     'LIRR':'sum','LIRRPrior':'sum',
                                                     'MNR':'sum','MNRPrior':'sum',
                                                     'AAR':'sum','AARPrior':'sum',
                                                     'BT':'sum','BTPrior':'sum'}).reset_index(drop=True)
-        df['Subway']=(df['Subway']-df['SubwayPrior'])/df['SubwayPrior']
-        df['Bus']=(df['Bus']-df['BusPrior'])/df['BusPrior']
-        df['Long Island Rail Road']=(df['LIRR']-df['LIRRPrior'])/df['LIRRPrior']
-        df['Metro-North Railroad']=(df['MNR']-df['MNRPrior'])/df['MNRPrior']
-        df['Access-A-Ride']=(df['AAR']-df['AARPrior'])/df['AARPrior']
-        df['Bridges and Tunnels']=(df['BT']-df['BTPrior'])/df['BTPrior']    
+        df['Subway']=df['Subway']/df['SubwayPrior']
+        df['Bus']=df['Bus']/df['BusPrior']
+        df['Long Island Rail Road']=df['LIRR']/df['LIRRPrior']
+        df['Metro-North Railroad']=df['MNR']/df['MNRPrior']
+        df['Access-A-Ride']=df['AAR']/df['AARPrior']
+        df['Bridges and Tunnels']=df['BT']/df['BTPrior']    
         df=pd.merge(df,wk,how='inner',on='Week')
         df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date2']]
         df=df[['Date','DateRange','Subway','Bus','Long Island Rail Road','Metro-North Railroad',
@@ -155,7 +157,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
                                            hoverinfo='skip'))
         fig.update_layout(
             template='plotly_white',
-            title={'text':'<b>MTA Estimated Weekly Ridership Change from 2019 (Source: '+"</b><a href='https://new.mta.info/coronavirus/ridership'>MTA</a>"+'<b>)</b>',
+            title={'text':'<b>MTA Estimated Weekly Ridership as Percentage of 2019 (Source: '+"</b><a href='https://new.mta.info/coronavirus/ridership'>MTA</a>"+'<b>)</b>',
                    'font_size':20,
                    'x':0.5,
                    'xanchor':'center',
@@ -187,7 +189,7 @@ while datetime.datetime.now(pytz.timezone('US/Eastern'))<endtime:
             hovermode='x unified',
             )
         fig.add_annotation(
-            text='* Percent Change From Pre-Pandemic Equivalent Day     ** Percent Change From 2019 Monthly Averages for Weekdays, Saturdays and Sundays',
+            text='* Percentage of Pre-Pandemic Equivalent Day     ** Percentage of 2019 Monthly Averages for Weekdays, Saturdays and Sundays',
             font_size=12,
             xref='paper',
             x=0.5,
