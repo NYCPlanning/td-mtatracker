@@ -1,4 +1,4 @@
-name: mtatracker
+name: mtatracker3
 
 on:
   workflow_dispatch
