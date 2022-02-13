@@ -1,4 +1,3 @@
-import git
 import datetime
 import pytz
 import pandas as pd
@@ -188,12 +187,6 @@ try:
     fig.write_html('./index2.html',
                    include_plotlyjs='cdn',
                    config={'displaylogo':False,'modeBarButtonsToRemove':['select2d','lasso2d']})
-
-    repo=git.Repo('./')
-    repo.git.add('.')
-    repo.index.commit('autoupdate')
-    origin=repo.remote(name='origin')
-    origin.push()
     
     print(timestamp+' SUCCESS!')
 
