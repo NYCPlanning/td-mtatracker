@@ -1,7 +1,8 @@
 name: mtatracker
 
 on:
-  workflow_dispatch
+  schedule:
+      - cron: '30 20 * * *'
 
 jobs:
   build:
