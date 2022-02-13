@@ -1,8 +1,7 @@
 name: mtatracker
 
 on:
-  schedule:
-      - cron: '0 21 * * *'
+  workflow_dispatch
 
 jobs:
   build:
@@ -29,3 +28,9 @@ jobs:
     - name: Run mta2.py
       run: |
         python ./mta2.py
+
+    - name: Git push
+      run: |
+        git add .
+        git commit -m "update"
+        git push 
