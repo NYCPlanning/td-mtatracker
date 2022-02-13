@@ -27,4 +27,4 @@ jobs:
 
     - name: Run mta2.py
       run: |
-        python ./GITHUB/mta2.py
+        python ./mta2.py
