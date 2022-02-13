@@ -30,7 +30,6 @@ jobs:
 
     - name: Git push
       run: |
-        git config --global user.email "mayijun1203@gmail.com"
         git config --global user.name "mayijun1203"
         git add .
         git commit -m "update"
