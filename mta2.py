@@ -58,6 +58,7 @@ try:
     # All Transit Percentage
     url='https://data.ny.gov/api/views/vxuj-8kew/rows.csv?accessType=DOWNLOAD&sorting=true'
     df=pd.read_csv(url,dtype=str)
+    df=df.replace('TBD','')
     df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
     df=df.sort_values(['Date']).reset_index(drop=True)
     df['Week']=[str(x.week)+'|'+str(x.year) for x in df['Date']]
@@ -72,17 +73,15 @@ try:
     df['SubwayPrior']=df['Subway']/df['SubwayPct']
     df['Bus']=pd.to_numeric(df['Buses: Total Estimated Ridership'])
     df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % of Comparable Pre-Pandemic Day']]
-    df['BusPrior']=df['Bus']/df['BusPct'] 
+    df['BusPrior']=df['Bus']/df['BusPct']
     df['LIRR']=pd.to_numeric(df['LIRR: Total Estimated Ridership'])
     df['LIRRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['LIRR: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
     df['LIRRPrior']=df['LIRR']/df['LIRRPct']
     df['MNR']=pd.to_numeric(df['Metro-North: Total Estimated Ridership'],errors='coerce')
     df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''),errors='coerce')/100 if pd.notna(x) else np.nan for x in df['Metro-North: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
     df['MNRPrior']=df['MNR']/df['MNRPct']
-    df['AAR']=np.where(df['Access-A-Ride: Total Scheduled Trips']=='TBD','',df['Access-A-Ride: Total Scheduled Trips'])
-    df['AAR']=pd.to_numeric(df['AAR'])
-    df['AARPct']=np.where(df['Access-A-Ride: % of Comprable Pre-Pandemic Day']=='TBD','',df['Access-A-Ride: % of Comprable Pre-Pandemic Day'])
-    df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['AARPct']]
+    df['AAR']=pd.to_numeric(df['Access-A-Ride: Total Scheduled Trips'])
+    df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % of Comprable Pre-Pandemic Day']]
     df['AARPrior']=df['AAR']/df['AARPct']
     df['BT']=pd.to_numeric(df['Bridges and Tunnels: Total Traffic'])
     df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % of Comparable Pre-Pandemic Day']]
