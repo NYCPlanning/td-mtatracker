@@ -9,7 +9,7 @@ timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y'
 
 try:
     # Subway and Bus Daily Ridership
-    url='https://new.mta.info/document/20441'
+    url='https://data.ny.gov/api/views/vxuj-8kew/rows.csv?accessType=DOWNLOAD&sorting=true'
     df=pd.read_csv(url,dtype=str)
     df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
     df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
@@ -56,7 +56,7 @@ try:
     
     
     # All Transit Percentage
-    url='https://new.mta.info/document/20441'
+    url='https://data.ny.gov/api/views/vxuj-8kew/rows.csv?accessType=DOWNLOAD&sorting=true'
     df=pd.read_csv(url,dtype=str)
     df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
     df=df.sort_values(['Date']).reset_index(drop=True)
