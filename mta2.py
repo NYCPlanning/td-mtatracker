@@ -69,22 +69,28 @@ try:
     wk=pd.merge(wkstart[['Week','Date1']],wkend[['Week','Date2']],how='inner',on='Week')
     wk['DateRange']=wk['Date1']+' - '+wk['Date2']    
     df['Subway']=pd.to_numeric(df['Subways: Total Estimated Ridership'])
-    df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % of Comparable Pre-Pandemic Day']]
+    # df['SubwayPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Subways: % of Comparable Pre-Pandemic Day']]
+    df['SubwayPct']=pd.to_numeric(df['Subways: % of Comparable Pre-Pandemic Day'])
     df['SubwayPrior']=df['Subway']/df['SubwayPct']
     df['Bus']=pd.to_numeric(df['Buses: Total Estimated Ridership'])
-    df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % of Comparable Pre-Pandemic Day']]
+    # df['BusPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Buses: % of Comparable Pre-Pandemic Day']]
+    df['BusPct']=pd.to_numeric(df['Buses: % of Comparable Pre-Pandemic Day'])
     df['BusPrior']=df['Bus']/df['BusPct']
     df['LIRR']=pd.to_numeric(df['LIRR: Total Estimated Ridership'])
-    df['LIRRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['LIRR: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+    # df['LIRRPct']=[pd.to_numeric(x.strip().replace('%',''))/100 if pd.notna(x) else np.nan for x in df['LIRR: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+    df['LIRRPct']=pd.to_numeric(df['LIRR: % of 2019 Monthly Weekday/Saturday/Sunday Average'])
     df['LIRRPrior']=df['LIRR']/df['LIRRPct']
     df['MNR']=pd.to_numeric(df['Metro-North: Total Estimated Ridership'],errors='coerce')
-    df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''),errors='coerce')/100 if pd.notna(x) else np.nan for x in df['Metro-North: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+    # df['MNRPct']=[pd.to_numeric(x.strip().replace('%',''),errors='coerce')/100 if pd.notna(x) else np.nan for x in df['Metro-North: % of 2019 Monthly Weekday/Saturday/Sunday Average']]
+    df['MNRPct']=pd.to_numeric(df['Metro-North: % of 2019 Monthly Weekday/Saturday/Sunday Average'])
     df['MNRPrior']=df['MNR']/df['MNRPct']
     df['AAR']=pd.to_numeric(df['Access-A-Ride: Total Scheduled Trips'])
-    df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % of Comprable Pre-Pandemic Day']]
+    # df['AARPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Access-A-Ride: % of Comprable Pre-Pandemic Day']]
+    df['AARPct']=pd.to_numeric(df['Access-A-Ride: % of Comprable Pre-Pandemic Day'])
     df['AARPrior']=df['AAR']/df['AARPct']
     df['BT']=pd.to_numeric(df['Bridges and Tunnels: Total Traffic'])
-    df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % of Comparable Pre-Pandemic Day']]
+    # df['BTPct']=[pd.to_numeric(x.strip().replace('%',''))/100 for x in df['Bridges and Tunnels: % of Comparable Pre-Pandemic Day']]
+    df['BTPct']=pd.to_numeric(df['Bridges and Tunnels: % of Comparable Pre-Pandemic Day'])
     df['BTPrior']=df['BT']/df['BTPct']
     df=df.groupby(['Week'],as_index=False).agg({'Subway':'sum','SubwayPrior':'sum',
                                                 'Bus':'sum','BusPrior':'sum',
