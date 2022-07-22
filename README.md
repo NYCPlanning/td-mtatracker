@@ -1,0 +1,1 @@
+<a href="https://nycplanning.github.io/td-mtatracker/7DayAvg" target="_blank"><b>Automatically Updated Chart</b></a>
