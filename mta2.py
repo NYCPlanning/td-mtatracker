@@ -8,10 +8,10 @@ import plotly.graph_objects as go
 timestamp=datetime.datetime.now(pytz.timezone('US/Eastern')).strftime('%m/%d/%Y')
 
 try:
-    # Subway and Bus Daily Ridership
-    url='https://data.ny.gov/api/views/vxuj-8kew/rows.csv?accessType=DOWNLOAD&sorting=true'
+    url='https://data.ny.gov/resource/vxuj-8kew.csv?$limit=5000'
     df=pd.read_csv(url,dtype=str)
-    df['Date']=[datetime.datetime.strptime(x,'%m/%d/%Y') for x in df['Date']]
+    df['Date']=[x.split('T')[0] for x in df['date']]
+    df['Date']=[datetime.datetime.strptime(x,'%Y-%m-%d') for x in df['Date']]
     df['Subway']=[int(x) for x in df['Subways: Total Estimated Ridership']]
     df['Bus']=[int(x) for x in df['Buses: Total Estimated Ridership']]
     df=df[['Date','Subway','Bus']].sort_values('Date').reset_index(drop=True)
